@@ -1,0 +1,80 @@
+#-------------------------------------------------------------------------------
+# Name:        module1
+# Purpose:
+#
+# Author:      HP
+#
+# Created:     25/10/2023
+# Copyright:   (c) HP 2023
+# Licence:     <your licence>
+#-------------------------------------------------------------------------------
+
+class CarParkPaymentSystem:
+    def __init__(self):
+        self.prices = {
+            "Sunday": (8, 2.0, 2.0),
+            "Monday": (2, 10.0, 2.0),
+            "Tuesday": (2, 10.0, 2.0),
+            "Wednesday": (2, 10.0, 2.0),
+            "Thursday": (2, 10.0, 2.0),
+            "Friday": (2, 10.0, 2.0),
+            "Saturday": (4, 3.0, 2.0)
+        }
+        self.discount_rate = 0.5
+
+    def calculate_price(self, day, arrival_hour, hours_parked, frequent_parking_number=None):
+        if day not in self.prices:
+            return "Invalid day"
+
+        max_stay, price_per_hour, discount_hour = self.prices[day]
+
+        arrival_hour = int(arrival_hour)  # Convert to integer
+        hours_parked = int(hours_parked)  # Convert to integer
+
+        if arrival_hour < 8 or arrival_hour >= discount_hour:
+            discount_rate = 0.1
+        else:
+            discount_rate = self.discount_rate
+
+        if frequent_parking_number:
+            frequent_parking_number = int(frequent_parking_number)  # Convert to integer
+            if self.validate_frequent_parking_number(frequent_parking_number):
+                price = hours_parked * price_per_hour * (1 - discount_rate)
+            else:
+                price = hours_parked * price_per_hour
+        else:
+            price = hours_parked * price_per_hour
+
+        return f"Total Price: ${price:.2f}"
+
+    def validate_frequent_parking_number(self, number):
+        if number < 10000 or number >= 100000:
+            return False
+
+        check_digit = number % 10
+        number_without_check_digit = number // 10
+
+        total = 0
+        factor = 1
+
+        while number_without_check_digit > 0:
+            digit = number_without_check_digit % 10
+            total += digit * factor
+            factor += 1
+            number_without_check_digit //= 10
+
+        calculated_check_digit = total % 11
+        return calculated_check_digit == check_digit
+
+
+# Example usage
+if __name__ == "__main__":
+    car_park = CarParkPaymentSystem()
+    day = input("Enter your day: ")
+    arrival_hour = input("Enter your arrival hour: ")
+    hours_parked = input("Enter your stay hours: ")
+    frequent_parking_number = input("Enter your parking number: ")
+
+    price = car_park.calculate_price(day, arrival_hour, hours_parked, frequent_parking_number)
+    print(price)
+
