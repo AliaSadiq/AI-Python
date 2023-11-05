@@ -16,6 +16,7 @@ class ComputerShop:
         self.chosen_components = {"Case": None, "RAM": None, "Main HDD": None}
         self.additional_chosen_items = {}
         self.total_price = 200.00  # Basic set of components cost
+        self.discount = 0.0
 
     def display_available_components(self):
         # Display available basic components and additional items
@@ -61,6 +62,14 @@ class ComputerShop:
             print("\nDo you want to add more additional items? (Y/N):")
             choice = input()
 
+    def calculate_discount(self):
+        # Calculate the discount based on the number of additional items
+        num_additional_items = len(self.additional_chosen_items)
+        if num_additional_items == 1:
+            self.discount = 0.05
+        elif num_additional_items >= 2:
+            self.discount = 0.10
+
     def display_order_summary(self):
         # Display the order summary, including chosen components and total price
         print("\nOrder Summary:")
@@ -70,7 +79,13 @@ class ComputerShop:
                 print(f"{category}: {item_code} - {description} - ${price}")
         for item_code, (description, price) in self.additional_chosen_items.items():
             print(f"Additional Item: {item_code} - {description} - ${price}")
-        print(f"Total Price: ${self.total_price:.2f}")
+        print(f"Total Price before Discount: ${self.total_price:.2f}")
+        self.calculate_discount()
+        discount_amount = self.total_price * self.discount
+        discounted_price = self.total_price - discount_amount
+        print(f"Discount Applied: {self.discount * 100}%")
+        print(f"Amount Saved: ${discount_amount:.2f}")
+        print(f"Total Price after Discount: ${discounted_price:.2f}")
 
 
 if __name__ == "__main__":
