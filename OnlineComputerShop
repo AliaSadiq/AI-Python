@@ -1,0 +1,81 @@
+class ComputerShop:
+    def __init__(self):
+        # Define available basic components and additional items
+        self.basic_components = {
+            "Case": {"A1": ("Compact", 75.00), "A2": ("Tower", 150.00)},
+            "RAM": {"B1": ("8 GB", 79.99), "B2": ("16 GB", 149.99), "B3": ("32 GB", 299.99)},
+            "Main Hard Disk Drive": {"C1": ("1 TB HDD", 49.99), "C2": ("2 TB HDD", 89.99), "C3": ("4 TB HDD", 129.99)}
+        }
+        self.additional_items = {
+            "Solid State Drive": {"D1": ("240 GB SSD", 59.99), "D2": ("480 GB SSD", 119.99)},
+            "Second Hard Disk Drive": {"E1": ("1 TB HDD", 49.99), "E2": ("2 TB HDD", 89.99), "E3": ("4 TB HDD", 129.99)},
+            "Optical Drive": {"F1": ("DVD/Blu-Ray Player", 50.00), "F2": ("DVD/Blu-Ray Re-writer", 100.00)},
+            "Operating System": {"G1": ("Standard Version", 100.00), "G2": ("Professional Version", 175.00)}
+        }
+        # Initialize chosen components and additional items
+        self.chosen_components = {"Case": None, "RAM": None, "Main HDD": None}
+        self.additional_chosen_items = {}
+        self.total_price = 200.00  # Basic set of components cost
+
+    def display_available_components(self):
+        # Display available basic components and additional items
+        print("Available Basic Components:")
+        for category, items in self.basic_components.items():
+            print(f"{category}:")
+            for item_code, (description, price) in items.items():
+                print(f"{item_code}: {description} - ${price}")
+        print("\nAvailable Additional Items:")
+        for category, items in self.additional_items.items():
+            print(f"{category}:")
+            for item_code, (description, price) in items.items():
+                print(f"{item_code}: {description} - ${price}")
+
+    def choose_basic_components(self):
+        # Prompt user to choose one case, one RAM, and one Main Hard Disk Drive
+        print("Choose one case, one RAM, and one Main Hard Disk Drive:")
+        for category, items in self.basic_components.items():
+            print(f"{category}:")
+            for item_code, (description, price) in items.items():
+                print(f"{item_code}: {description} - ${price}")
+            choice = input(f"Enter the item code for {category}: ")
+            if choice in items:
+                self.chosen_components[category] = items[choice]
+                self.total_price += price
+
+    def choose_additional_items(self):
+        # Prompt user to choose additional items
+        print("\nDo you want to purchase additional items? (Y/N):")
+        choice = input()
+        while choice.lower() == 'y':
+            print("Additional Items:")
+            for category, items in self.additional_items.items():
+                print(f"{category}:")
+                for item_code, (description, price) in items.items():
+                    print(f"{item_code}: {description} - ${price}")
+                item_code = input(f"Enter the item code for {category} (or N to skip): ")
+                if item_code.lower() == 'n':
+                    break
+                elif item_code in items:
+                    self.additional_chosen_items[item_code] = items[item_code]
+                    self.total_price += price
+            print("\nDo you want to add more additional items? (Y/N):")
+            choice = input()
+
+    def display_order_summary(self):
+        # Display the order summary, including chosen components and total price
+        print("\nOrder Summary:")
+        for category, item_info in self.chosen_components.items():
+            if item_info is not None:
+                item_code, description, price = item_info
+                print(f"{category}: {item_code} - {description} - ${price}")
+        for item_code, (description, price) in self.additional_chosen_items.items():
+            print(f"Additional Item: {item_code} - {description} - ${price}")
+        print(f"Total Price: ${self.total_price:.2f}")
+
+
+if __name__ == "__main__":
+    shop = ComputerShop()
+    shop.display_available_components()
+    shop.choose_basic_components()
+    shop.choose_additional_items()
+    shop.display_order_summary()
