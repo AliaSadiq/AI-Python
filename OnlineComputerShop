@@ -40,7 +40,7 @@ class ComputerShop:
                 print(f"{item_code}: {description} - ${price}")
             choice = input(f"Enter the item code for {category}: ")
             if choice in items:
-                self.chosen_components[category] = items[choice]
+                self.chosen_components[category] = (choice, items[choice])
                 self.total_price += price
 
     def choose_additional_items(self):
@@ -57,7 +57,7 @@ class ComputerShop:
                 if item_code.lower() == 'n':
                     break
                 elif item_code in items:
-                    self.additional_chosen_items[item_code] = items[item_code]
+                    self.additional_chosen_items[item_code] = (item_code, items[item_code])
                     self.total_price += price
             print("\nDo you want to add more additional items? (Y/N):")
             choice = input()
@@ -75,7 +75,7 @@ class ComputerShop:
         print("\nOrder Summary:")
         for category, item_info in self.chosen_components.items():
             if item_info is not None:
-                item_code, description, price = item_info
+                item_code, (description, price) = item_info
                 print(f"{category}: {item_code} - {description} - ${price}")
         for item_code, (description, price) in self.additional_chosen_items.items():
             print(f"Additional Item: {item_code} - {description} - ${price}")
