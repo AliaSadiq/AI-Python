@@ -1,0 +1,54 @@
+class TrainJourney:
+    def __init__(self, departure_time):
+        self.departure_time = departure_time
+        self.total_passengers = 0
+        self.total_money = 0
+        self.available_tickets = [80] * 6  # 6 coaches with 80 seats each
+
+    def display_tickets_available(self):
+        if any(self.available_tickets):
+            return self.available_tickets
+        else:
+            return "Closed"
+
+    def book_ticket(self, num_passengers):
+        if sum(self.available_tickets) >= num_passengers:
+            self.total_passengers += num_passengers
+            self.total_money += num_passengers * 25
+            for i in range(num_passengers):
+                self.available_tickets[i % 6] -= 1
+            return True
+        else:
+            return False
+
+
+class MountainRailway:
+    def __init__(self):
+        self.up_journeys = [
+            TrainJourney("09:00"),
+            TrainJourney("11:00"),
+            TrainJourney("13:00"),
+            TrainJourney("15:00"),
+        ]
+        self.down_journeys = [
+            TrainJourney("10:00"),
+            TrainJourney("12:00"),
+            TrainJourney("14:00"),
+            TrainJourney("16:00"),
+        ]
+
+    def start_of_day_display(self):
+        print("Electric Mountain Railway - Start of the Day Display")
+        print("--------------------------------------------------")
+        print("Up Journeys:")
+        for journey in self.up_journeys:
+            print(f"{journey.departure_time}: Tickets: {journey.display_tickets_available()}")
+
+        print("\nDown Journeys:")
+        for journey in self.down_journeys:
+            print(f"{journey.departure_time}: Tickets: {journey.display_tickets_available()}")
+
+
+# Testing the program
+mountain_railway = MountainRailway()
+mountain_railway.start_of_day_display()
