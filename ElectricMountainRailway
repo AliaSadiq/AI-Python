@@ -1,54 +1,82 @@
 class TrainJourney:
     def __init__(self, departure_time):
         self.departure_time = departure_time
+        self.available_tickets = [80] * 6  # 6 coaches with 80 seats each
         self.total_passengers = 0
         self.total_money = 0
-        self.available_tickets = [80] * 6  # 6 coaches with 80 seats each
 
-    def display_tickets_available(self):
-        if any(self.available_tickets):
-            return self.available_tickets
+    def display_status(self):
+        if all(tickets == 0 for tickets in self.available_tickets):
+            print(f"Train at {self.departure_time}: Closed")
         else:
-            return "Closed"
+            print(f"Train at {self.departure_time}: {self.available_tickets} tickets available")
 
-    def book_ticket(self, num_passengers):
-        if sum(self.available_tickets) >= num_passengers:
-            self.total_passengers += num_passengers
-            self.total_money += num_passengers * 25
-            for i in range(num_passengers):
-                self.available_tickets[i % 6] -= 1
-            return True
+    def book_tickets(self, num_tickets):
+        if all(tickets >= num_tickets for tickets in self.available_tickets):
+            self.update_totals(num_tickets)
+            self.update_display(num_tickets)
+            print(f"Tickets booked successfully for the {self.departure_time} train.")
         else:
-            return False
+            print(f"Tickets not available for the {self.departure_time} train.")
+
+    def update_totals(self, num_tickets):
+        self.total_passengers += num_tickets
+        self.total_money += self.calculate_ticket_price(num_tickets)
+
+    def update_display(self, num_tickets):
+        for i in range(6):
+            self.available_tickets[i] -= num_tickets
+
+    def calculate_ticket_price(self, num_tickets):
+        return num_tickets * 25
+
+    def is_last_train(self):
+        return self.departure_time == "16:00"
 
 
-class MountainRailway:
+class ElectricMountainRailway:
     def __init__(self):
-        self.up_journeys = [
+        self.up_trains = [
             TrainJourney("09:00"),
             TrainJourney("11:00"),
             TrainJourney("13:00"),
-            TrainJourney("15:00"),
+            TrainJourney("15:00")
         ]
-        self.down_journeys = [
+        self.down_trains = [
             TrainJourney("10:00"),
             TrainJourney("12:00"),
             TrainJourney("14:00"),
-            TrainJourney("16:00"),
+            TrainJourney("16:00")
         ]
 
     def start_of_day_display(self):
-        print("Electric Mountain Railway - Start of the Day Display")
-        print("--------------------------------------------------")
-        print("Up Journeys:")
-        for journey in self.up_journeys:
-            print(f"{journey.departure_time}: Tickets: {journey.display_tickets_available()}")
+        print("Welcome to the Electric Mountain Railway!")
+        for train in self.up_trains + self.down_trains:
+            train.display_status()
 
-        print("\nDown Journeys:")
-        for journey in self.down_journeys:
-            print(f"{journey.departure_time}: Tickets: {journey.display_tickets_available()}")
+    def purchase_tickets(self, num_passengers, departure_time):
+        train_journey = self.find_train(departure_time)
+        if train_journey:
+            train_journey.book_tickets(num_passengers)
+            if train_journey.is_last_train():
+                self.handle_last_train()
+
+    def find_train(self, departure_time):
+        for train in self.up_trains + self.down_trains:
+            if train.departure_time == departure_time:
+                return train
+        print("Invalid departure time.")
+        return None
+
+    def handle_last_train(self):
+        print("Note: Last train from the top of the mountain has two extra coaches.")
 
 
-# Testing the program
-mountain_railway = MountainRailway()
-mountain_railway.start_of_day_display()
+# Task 1 - Start of the day
+railway = ElectricMountainRailway()
+railway.start_of_day_display()
+
+# Task 2 - Purchasing tickets
+railway.purchase_tickets(5, "09:00")  # Test booking tickets for the 09:00 train
+railway.purchase_tickets(12, "11:00")  # Test booking group tickets for the 11:00 train
+railway.purchase_tickets(80, "16:00")  # Test booking tickets for the last train
