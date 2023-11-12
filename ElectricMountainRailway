@@ -1,80 +1,106 @@
 class ElectricMountainRailway:
     def __init__(self):
-        self.journeys = {
-            '09:00': {'up': 0, 'down': 0, 'up_money': 0, 'down_money': 0},
-            '11:00': {'up': 0, 'down': 0, 'up_money': 0, 'down_money': 0},
-            '13:00': {'up': 0, 'down': 0, 'up_money': 0, 'down_money': 0},
-            '15:00': {'up': 0, 'down': 0, 'up_money': 0, 'down_money': 0},
-        }
-        self.seats_per_coach = 80
+        self.up_trips = ["09:00", "11:00", "13:00", "15:00"]
+        self.down_trips = ["10:00", "12:00", "14:00", "16:00"]
+        self.total_passengers_up = [0] * 4
+        self.total_passengers_down = [0] * 4
+        self.total_money_up = [0] * 4
+        self.total_money_down = [0] * 4
         self.ticket_price = 25
-        self.group_discount_threshold = 10
 
     def display_screen(self):
-        print("Train Times\tAvailable Seats")
-        for time, data in self.journeys.items():
-            if data['up'] > 0:
-                print(f"{time} - Up: {self.available_seats(data['up'])}\tDown: {self.available_seats(data['down'])}")
+        print("\nElectric Mountain Railway - Start of the Day")
+        print("===========================================")
+        print("Trip\tDeparture\tReturn\t\tAvailable Seats")
+        print("------------------------------------------------")
+
+        for i in range(4):
+            available_seats_up = 80 - self.total_passengers_up[i]
+            available_seats_down = 80 - self.total_passengers_down[i]
+
+            if available_seats_up > 0:
+                print(f"{i + 1}.\t{self.up_trips[i]}\t\t{self.down_trips[i]}\t\t{available_seats_up}")
             else:
-                print(f"{time} - Closed")
+                print(f"{i + 1}.\t{self.up_trips[i]}\t\t{self.down_trips[i]}\t\tClosed")
 
-    def available_seats(self, booked_seats):
-        remaining_seats = self.seats_per_coach * 6 - booked_seats
-        return "Closed" if remaining_seats == 0 else remaining_seats
+    def book_ticket(self):
+        trip_type = input("\nEnter trip type (up/down): ").lower()
+        trip_number = int(input("Enter trip number (1-4): "))
+        num_passengers = int(input("Enter number of passengers: "))
 
-    def purchase_tickets(self, time, num_tickets):
-        journey = self.journeys[time]
-        total_price = num_tickets * self.ticket_price
+        if trip_type == "up":
+            if self.check_availability(trip_type, trip_number, num_passengers):
+                self.total_passengers_up[trip_number - 1] += num_passengers
+                self.total_money_up[trip_number - 1] += self.calculate_ticket_cost(num_passengers)
+                print("Tickets booked successfully!")
+            else:
+                print("Not enough seats available.")
+        elif trip_type == "down":
+            if self.check_availability(trip_type, trip_number, num_passengers):
+                self.total_passengers_down[trip_number - 1] += num_passengers
+                self.total_money_down[trip_number - 1] += self.calculate_ticket_cost(num_passengers)
+                print("Tickets booked successfully!")
+            else:
+                print("Not enough seats available.")
 
-        if journey['up'] + num_tickets <= self.seats_per_coach * 6 and journey['down'] + num_tickets <= self.seats_per_coach * 6:
-            journey['up'] += num_tickets
-            journey['down'] += num_tickets
+    def check_availability(self, trip_type, trip_number, num_passengers):
+        if trip_type == "up":
+            available_seats = 80 - self.total_passengers_up[trip_number - 1]
+        elif trip_type == "down":
+            available_seats = 80 - self.total_passengers_down[trip_number - 1]
 
-            if num_tickets >= self.group_discount_threshold:
-                free_tickets = num_tickets // self.group_discount_threshold
-                total_price -= free_tickets * self.ticket_price
+        return available_seats >= num_passengers
 
-            journey['up_money'] += total_price
-            journey['down_money'] += total_price
+    def calculate_ticket_cost(self, num_passengers):
+        free_tickets = num_passengers // 10
+        total_cost = (num_passengers - free_tickets) * self.ticket_price
+        return total_cost
 
-            print(f"Tickets purchased successfully for {num_tickets} passengers at {time}. Total cost: ${total_price}")
+    def update_display(self):
+        print("\nUpdated Display:")
+        print("=================")
+        print("Trip\tDeparture\tReturn\t\tAvailable Seats")
+        print("------------------------------------------------")
 
-            return True
-        else:
-            print(f"Tickets not available for {num_tickets} passengers at {time}.")
-            return False
+        for i in range(4):
+            available_seats_up = 80 - self.total_passengers_up[i]
+            available_seats_down = 80 - self.total_passengers_down[i]
 
-    def end_of_day_summary(self):
-        total_passengers = 0
-        total_money = 0
-        max_passengers = 0
-        max_journey = ''
+            if available_seats_up > 0:
+                print(f"{i + 1}.\t{self.up_trips[i]}\t\t{self.down_trips[i]}\t\t{available_seats_up}")
+            else:
+                print(f"{i + 1}.\t{self.up_trips[i]}\t\t{self.down_trips[i]}\t\tClosed")
 
-        print("\nEnd of Day Summary:")
-        for time, data in self.journeys.items():
-            total_passengers += data['up'] + data['down']
-            total_money += data['up_money'] + data['down_money']
+    def end_of_day_report(self):
+        print("\nEnd of the Day Report:")
+        print("=======================")
 
-            if data['up'] + data['down'] > max_passengers:
-                max_passengers = data['up'] + data['down']
-                max_journey = time
+        for i in range(4):
+            total_passengers = self.total_passengers_up[i] + self.total_passengers_down[i]
+            total_money = self.total_money_up[i] + self.total_money_down[i]
 
-            print(f"{time} - Passengers: {data['up'] + data['down']}, Revenue: ${data['up_money'] + data['down_money']}")
+            print(f"\nTrip {i + 1} - {self.up_trips[i]} to {self.down_trips[i]}:")
+            print(f"Total Passengers: {total_passengers}")
+            print(f"Total Money: ${total_money}")
 
-        print("\nTotal Passengers: ", total_passengers)
-        print("Total Revenue: $", total_money)
-        print(f"Most popular journey: {max_journey} with {max_passengers} passengers")
+        total_passengers_day = sum(self.total_passengers_up) + sum(self.total_passengers_down)
+        total_money_day = sum(self.total_money_up) + sum(self.total_money_down)
+
+        print("\nOverall Totals for the Day:")
+        print("===========================")
+        print(f"Total Passengers for the Day: {total_passengers_day}")
+        print(f"Total Money for the Day: ${total_money_day}")
+
+        most_passengers_trip = self.up_trips[self.total_passengers_up.index(max(self.total_passengers_up))]
+        print(f"\nTrain Journey with the Most Passengers: {most_passengers_trip}")
 
 
-# Task 1 - Start of the day
+# Main Program
 railway = ElectricMountainRailway()
 railway.display_screen()
 
-# Task 2 - Purchasing tickets
-railway.purchase_tickets('09:00', 15)
-railway.purchase_tickets('11:00', 8)
-railway.purchase_tickets('13:00', 25)
-railway.display_screen()
+for _ in range(2):  # Let's assume two bookings for testing
+    railway.book_ticket()
 
-# Task 3 - End of the day
-railway.end_of_day_summary()
+railway.update_display()
+railway.end_of_day_report()
