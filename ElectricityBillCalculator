@@ -4,7 +4,10 @@ class ElectricityBillCalculator:
         self.units_matrix = units_matrix
 
     def display_menu(self):
+        # Display student ID at the top of the menu
         print(f"Student ID: {self.student_id}")
+
+        # Display menu options
         print("1. Display the bill of slab 1 and slab 2")
         print("2. Display the bill of slab 3")
         print("Any other key to exit")
@@ -25,25 +28,33 @@ class ElectricityBillCalculator:
         self.calculate_and_display_cost(unit_range, cost_per_unit, 2)
 
     def calculate_and_display_cost(self, unit_range, cost_per_unit, slab_index):
+        # Get user input for units consumed
         units_consumed = int(input(f"Enter units consumed in {unit_range}: "))
+
+        # Calculate and display the cost
         total_cost = units_consumed * cost_per_unit
         print(f"Cost for units consumed in {unit_range}: Rs. {total_cost}")
 
     def run_menu(self):
         while True:
+            # Display the menu
             self.display_menu()
+
+            # Get user choice
             choice = input("Enter your choice: ")
 
+            # Process user choice
             if choice == '1':
                 self.cost_slab1()
                 self.cost_slab2()
             elif choice == '2':
                 self.cost_slab3()
             else:
+                # Exit the program if the user enters any other key
                 print("Exiting the program. Thank you!")
                 break
 
-# Example usage
+
 student_id = "12345"
 units_matrix = [
     [10, 15],
@@ -51,5 +62,8 @@ units_matrix = [
     [30, 35]
 ]
 
+# Create an instance of the ElectricityBillCalculator
 calculator = ElectricityBillCalculator(student_id, units_matrix)
+
+# Run the menu
 calculator.run_menu()
