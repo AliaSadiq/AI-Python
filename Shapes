@@ -1,0 +1,51 @@
+import math
+
+class Hexagon:
+    def __init__(self, cnic_last_digit):
+        self.side_length = cnic_last_digit
+        self.angle_measure = 120
+
+    def calcArea(self):
+        return 1.5 * 1.732 * self.side_length * self.side_length
+
+    def calcPeri(self):
+        return 6 * self.side_length
+
+    def calcAngleSum(self):
+        return 6 * self.angle_measure
+
+    def display(self):
+        print("Hexagon - Area:", self.calcArea())
+        print("Hexagon - Perimeter:", self.calcPeri())
+        print("Hexagon - Sum of Angles:", self.calcAngleSum())
+
+class Square:
+    def __init__(self, cnic_last_digit):
+        self.side_length = cnic_last_digit + 1
+
+    def calcAreaSquare(self):
+        return self.side_length * self.side_length
+
+    def calcPeriSquare(self):
+        return 4 * self.side_length
+
+    def display(self):
+        print("Square - Area:", self.calcAreaSquare())
+        print("Square - Perimeter:", self.calcPeriSquare())
+
+# Get the last digit of the CNIC
+cnic_last_digit = int(input("Enter the last digit of your CNIC: "))
+
+while True:
+    # Check user input and perform the corresponding actions
+    user_input = input("Enter '1' for Hexagon or '2' for Square (any other input to exit): ")
+
+    if user_input == '1':
+        hexagon_object = Hexagon(cnic_last_digit)
+        hexagon_object.display()
+    elif user_input == '2':
+        square_object = Square(cnic_last_digit)
+        square_object.display()
+    else:
+        print("Exiting the program.")
+        break
