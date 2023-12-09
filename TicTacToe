@@ -1,0 +1,67 @@
+class TicTacToe:
+    def __init__(self):
+        self.board = [' '] * 9
+        self.current_player = 'X'
+
+    def display_board(self):
+        print(f"{self.board[0]} | {self.board[1]} | {self.board[2]}")
+        print("---------")
+        print(f"{self.board[3]} | {self.board[4]} | {self.board[5]}")
+        print("---------")
+        print(f"{self.board[6]} | {self.board[7]} | {self.board[8]}")
+
+    def make_move(self, position):
+        if self.board[position] == ' ':
+            self.board[position] = self.current_player
+            self.current_player = 'O' if self.current_player == 'X' else 'X'
+            return True
+        else:
+            print("Invalid move. Try again.")
+            return False
+
+    def check_winner(self):
+        # Check rows
+        for i in range(0, 9, 3):
+            if self.board[i] == self.board[i + 1] == self.board[i + 2] != ' ':
+                return True
+
+        # Check columns
+        for i in range(3):
+            if self.board[i] == self.board[i + 3] == self.board[i + 6] != ' ':
+                return True
+
+        # Check diagonals
+        if self.board[0] == self.board[4] == self.board[8] != ' ' or \
+           self.board[2] == self.board[4] == self.board[6] != ' ':
+            return True
+
+        return False
+
+    def check_draw(self):
+        return ' ' not in self.board
+
+    def play_game(self):
+        while True:
+            self.display_board()
+
+            if self.check_winner():
+                print(f"Player {self.current_player} wins!")
+                break
+
+            if self.check_draw():
+                print("It's a draw!")
+                break
+
+            try:
+                position = int(input(f"Player {self.current_player}, enter your move (1-9): ")) - 1
+                if 0 <= position <= 8:
+                    if self.make_move(position):
+                        continue
+                else:
+                    print("Invalid position. Please enter a number between 1 and 9.")
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+
+if __name__ == "__main__":
+    game = TicTacToe()
+    game.play_game()
