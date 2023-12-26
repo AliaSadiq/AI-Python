@@ -1,0 +1,81 @@
+class Sack:
+    def __init__(self, contents, weight):
+        self.contents = contents
+        self.weight = weight
+
+    def check_sack(self):
+        if self.contents not in ['C', 'G', 'S']:
+            return "Invalid contents"
+        if self.contents == 'C' and not (24.9 < self.weight < 25.1):
+            return "Invalid weight for cement"
+        if self.contents in ['G', 'S'] and not (49.9 < self.weight < 50.1):
+            return "Invalid weight for gravel or sand"
+        return f"Accepted: Contents - {self.contents}, Weight - {self.weight} kg"
+
+
+class Order:
+    def __init__(self):
+        self.sacks = []
+
+    def add_sack(self, contents, weight):
+        sack = Sack(contents, weight)
+        result = sack.check_sack()
+        if "Accepted" in result:
+            self.sacks.append(sack)
+        return result
+
+    def check_order(self):
+        rejected_sacks = [sack for sack in self.sacks if "Invalid" in sack.check_sack()]
+        total_weight = sum(sack.weight for sack in self.sacks)
+        return total_weight, rejected_sacks
+
+
+class PriceCalculator:
+    def __init__(self, order):
+        self.order = order
+
+    def calculate_price(self):
+        regular_price = sum(self.get_sack_price(sack.contents) for sack in self.order.sacks)
+        special_packs = min(self.order.sacks.count(Sack('C', 25)),
+                            self.order.sacks.count(Sack('G', 50)),
+                            self.order.sacks.count(Sack('S', 50)))
+        discount_price = special_packs * 10
+        new_price = regular_price - discount_price
+        amount_saved = regular_price - new_price
+        return regular_price, discount_price, new_price, amount_saved
+
+    @staticmethod
+    def get_sack_price(contents):
+        if contents == 'C':
+            return 3
+        elif contents in ['G', 'S']:
+            return 2
+        return 0
+
+
+def main():
+    order = Order()
+
+    # Task 2 - Check a customer’s order for delivery
+    num_sacks = int(input("Enter the number of sacks for the order: "))
+    for _ in range(num_sacks):
+        contents = input("Enter contents for a sack (C/G/S): ").upper()
+        weight = float(input("Enter weight for the sack (in kg): "))
+        result = order.add_sack(contents, weight)
+        print(result)
+
+    total_weight, rejected_sacks = order.check_order()
+    print(f"\nTotal Weight of Order: {total_weight} kg")
+    print(f"Number of Sacks Rejected: {len(rejected_sacks)}")
+
+    # Task 3 - Calculate the price for a customer’s order
+    calculator = PriceCalculator(order)
+    regular_price, discount_price, new_price, amount_saved = calculator.calculate_price()
+    print(f"\nRegular Price: ${regular_price}")
+    print(f"Discount Price: ${discount_price}")
+    print(f"New Price: ${new_price}")
+    print(f"Amount Saved: ${amount_saved}")
+
+
+if __name__ == "__main__":
+    main()

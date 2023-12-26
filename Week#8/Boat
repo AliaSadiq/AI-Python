@@ -1,0 +1,72 @@
+from datetime import datetime, timedelta
+
+class Boat:
+    def __init__(self, boat_number):
+        self.boat_number = boat_number
+        self.total_money = 0
+        self.total_hours_hired = 0
+        self.return_time = datetime(2023, 1, 1, 10, 0)  # Start at 10:00 AM
+
+    def calculate_daily_profit(self):
+        try:
+            hire_duration = float(input(f"Enter the hire duration for Boat {self.boat_number} (in hours): "))
+            if not (0.5 <= hire_duration <= 7):  # Boats can be hired for at least 0.5 hours and at most 7 hours
+                raise ValueError("Invalid hire duration. Must be between 0.5 and 7 hours.")
+            
+            current_time = datetime.now().replace(second=0, microsecond=0)
+            if current_time < self.return_time:
+                raise ValueError(f"Boat {self.boat_number} is already hired until {self.return_time.strftime('%H:%M')}.")
+
+            if hire_duration > 1:
+                cost = hire_duration * 20  # $20 per hour for more than 1 hour
+            else:
+                cost = hire_duration * 12  # $12 for half an hour or less
+            
+            self.total_money += cost
+            self.total_hours_hired += hire_duration
+            self.return_time = current_time + timedelta(hours=hire_duration)
+
+            print(f"Boat {self.boat_number} hired for {hire_duration} hours. Total money: ${self.total_money:.2f}")
+        except ValueError as e:
+            print(f"Error: {e}")
+
+    def is_available(self, current_time):
+        return current_time >= self.return_time
+
+    def get_next_available_time(self, current_time):
+        if self.return_time > current_time:
+            return self.return_time
+        else:
+            return current_time
+
+def main():
+    boats = [Boat(i) for i in range(1, 11)]
+
+    # Task 2 - Find the next boat available
+    current_time = datetime.now().replace(second=0, microsecond=0)
+    available_boats = [boat for boat in boats if boat.is_available(current_time)]
+
+    if available_boats:
+        print("Available boats:", [boat.boat_number for boat in available_boats])
+    else:
+        next_available_time = min([boat.get_next_available_time(current_time) for boat in boats])
+        print(f"No boats available. Next available time: {next_available_time.strftime('%H:%M')}")
+
+    # Task 1 - Calculate the money taken in a day for one boat
+    for boat in boats:
+        boat.calculate_daily_profit()
+
+    # Task 3 - Calculate the money taken for all the boats at the end of the day
+    total_money_taken = sum(boat.total_money for boat in boats)
+    total_hours_hired = sum(boat.total_hours_hired for boat in boats)
+    unused_boats = [boat.boat_number for boat in boats if boat.total_hours_hired == 0]
+    most_used_boat = max(boats, key=lambda x: x.total_hours_hired).boat_number
+
+    print("\nEnd of Day Report:")
+    print(f"Total money taken: ${total_money_taken:.2f}")
+    print(f"Total hours boats were hired: {total_hours_hired} hours")
+    print(f"Boats not used today: {', '.join(map(str, unused_boats))}")
+    print(f"Boat used the most: Boat {most_used_boat}, Total hours hired: {boats[most_used_boat - 1].total_hours_hired} hours")
+
+if __name__ == "__main__":
+    main()

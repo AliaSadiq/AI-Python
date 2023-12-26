@@ -1,0 +1,63 @@
+class CharityManager:
+    def __init__(self):
+        self.charities = ["Charity A", "Charity B", "Charity C"]
+        self.charity_totals = [0, 0, 0]
+        self.grand_total = 0
+
+    def display_charities(self):
+        print("Choose a charity:")
+        for i, charity in enumerate(self.charities, start=1):
+            print(f"{i}. {charity}")
+
+    def get_charity_choice(self):
+        while True:
+            try:
+                choice = int(input("Enter the number of your chosen charity (1, 2, or 3): "))
+                if 1 <= choice <= 3:
+                    return choice
+                else:
+                    print("Invalid choice. Please enter 1, 2, or 3.")
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+
+    def process_donation(self):
+        self.display_charities()
+        choice = self.get_charity_choice()
+        if choice == -1:
+            self.show_totals()
+        else:
+            bill_amount = float(input("Enter the customer's shopping bill amount: "))
+            donation = 0.01 * bill_amount
+            self.charity_totals[choice - 1] += donation
+            self.grand_total += donation
+            print(f"Donation of ${donation:.2f} made to {self.charities[choice - 1]}.")
+
+    def show_totals(self):
+        sorted_charities = sorted(
+            zip(self.charities, self.charity_totals),
+            key=lambda x: x[1],
+            reverse=True
+        )
+
+        print("\nCharity Totals:")
+        for charity, total in sorted_charities:
+            print(f"{charity}: ${total:.2f}")
+
+        print(f"\nGRAND TOTAL DONATED TO CHARITY: ${self.grand_total:.2f}")
+
+
+def main():
+    manager = CharityManager()
+
+    # Task 1 - Set up the donation system
+    # (charities' names and totals are initialized)
+
+    # Task 2 - Record and total each donation
+    for _ in range(3):  # For testing, let's process donations for 3 customers
+        manager.process_donation()
+
+    # Task 3 - Show the totals so far
+    manager.process_donation()  # Choosing -1 to show totals
+
+if __name__ == "__main__":
+    main()
